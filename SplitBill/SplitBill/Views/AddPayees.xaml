@@ -13,7 +13,7 @@
             </Style>
             <DataTemplate x:Key="personTemplate">
                  <ViewCell>
-                    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <StackLayout BackgroundColor="{Binding BackgroundColor}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*"/>

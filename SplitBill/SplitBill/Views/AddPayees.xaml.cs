@@ -1,29 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using SplitBill.DependencyServices;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace SplitBill.Views
 {
     public partial class AddPayees : ContentPage
     {
         public List<Contact> _ContactsList { get; set; }
-        private ObservableCollection<Contact> ContactsList { get; set; }
-        private ObservableCollection<Contact> selectedContactsList;
+        //private ObservableCollection<Contact> ContactsList { get; set; }
+        //private ObservableCollection<Contact> selectedContactsList;
+        private ObservableCollection<PayeeList> ContactsList { get; set; }
+        private ObservableCollection<PayeeList> selectedContactsList;
         public AddPayees(List<Contact> _contactsList)
         {
             _ContactsList = _contactsList;
-            ContactsList = new ObservableCollection<Contact>();
+            ContactsList = new ObservableCollection<PayeeList>();
             foreach(var item in _ContactsList)
             {
-                ContactsList.Add(item);
+                ContactsList.Add(new PayeeList{
+                    ContactId = item.ContactId,
+                    ContactName = item.ContactName,
+                    DisplayName = item.DisplayName,
+                    PrimaryContactNumber = item.PrimaryContactNumber,
+                    AllContactNumbers = item.AllContactNumbers,
+                    xyz = item.xyz,
+                    //IsSelected = false,
+                    //BackgroundColor = Color.Green
+                });
             }
             BindingContext = this;
             InitializeComponent();
             contactsListView.ItemsSource = ContactsList;
             contactsListView.ItemSelected += ContactSelected;
-            selectedContactsList = new ObservableCollection<Contact>();
+            selectedContactsList = new ObservableCollection<PayeeList>();
+
+            //var source = contactsListView.ItemTemplate;
+            //source.PropertyChanged += 
+
         }
 
         void BackButtonClicked(object sender, System.EventArgs e)
@@ -50,36 +67,52 @@ namespace SplitBill.Views
             }
         }
 
+        //void Handle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         void ContactSelected(object sender, SelectedItemChangedEventArgs e)
         {
             try
             {
-                var itemSelected = ((ListView)sender).SelectedItem;
-                if (itemSelected == null)
+                var _itemSelected = ((ListView)sender).SelectedItem;
+                if (_itemSelected == null)
                 {
                     return;
                 }
                 else
                 {
-                    var _itemSelected = (Contact)itemSelected;
-                    selectedContactsList.Add(_itemSelected);
-                    SelectedContactView selectedContact = new SelectedContactView(_itemSelected)
+                    var itemSelected = (PayeeList)_itemSelected;
+                    if (itemSelected.BackgroundColor == Color.Green)
                     {
-                    };
-                    selectedContactsStack.Children.Add(selectedContact);
-                    selectedContact.ItemUnSelected += (object _sender, EventArgs _e) =>
-                    {
-                        try
+                        selectedContactsList.Add(itemSelected);
+                        SelectedContactView selectedContact = new SelectedContactView(itemSelected)
                         {
-                            var _owner = (SelectedContactView)_sender;
-                            selectedContactsStack.Children.Remove(_owner);
-                            selectedContactsList.Remove(_itemSelected);
-                        }
-                        catch (Exception ex)
+                        };
+                        selectedContactsStack.Children.Add(selectedContact);
+                        selectedContact.ItemUnSelected += (object _sender, EventArgs _e) =>
                         {
-                            DataPrintx.PrintException(ex);
-                        }
-                    };
+                            try
+                            {
+                                var _owner = (SelectedContactView)_sender;
+                                var _unSelectedItem = _owner.PayeeList;
+                                var _selectedItem = ContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
+                                _selectedItem.BackgroundColor = Color.Green;
+                                var unSelectedItem = selectedContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
+                                if (unSelectedItem != null)
+                                {
+                                    selectedContactsList.Remove(unSelectedItem);
+                                }
+                                selectedContactsStack.Children.Remove(_owner);
+                            }
+                            catch (Exception ex)
+                            {
+                                DataPrintx.PrintException(ex);
+                            }
+                        };
+                        itemSelected.BackgroundColor = Color.Maroon;
+                    }
                 }
                 ((ListView)sender).SelectedItem = null;
             }
@@ -93,10 +126,10 @@ namespace SplitBill.Views
     public class SelectedContactView : ContentView
     {
         public event EventHandler<EventArgs> ItemUnSelected;
-        public Contact Contact { get; set; }
-        public SelectedContactView(Contact _contact)
+        public PayeeList PayeeList { get; set; }
+        public SelectedContactView(PayeeList _payeeList)
         {
-            Contact = _contact;
+            PayeeList = _payeeList;
             SetLayout();
         }
 
@@ -106,7 +139,7 @@ namespace SplitBill.Views
             {
                 Label nameLabel = new Label()
                 {
-                    Text = Contact.DisplayName,
+                    Text = PayeeList.DisplayName,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     VerticalOptions = LayoutOptions.FillAndExpand
                 };
@@ -164,5 +197,52 @@ namespace SplitBill.Views
                 DataPrintx.PrintException(ex);
             }
         }
+    }
+
+    public class PayeeList : System.ComponentModel.INotifyPropertyChanged
+    {
+        public string ContactId { get; set; }
+        public string ContactName { get; set; }
+        public string DisplayName { get; set; }
+        public string PrimaryContactNumber { get; set; }
+        public List<double> AllContactNumbers { get; set; }
+        public string xyz { get; set; }
+
+        public bool isSelected = false;
+        public bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+            set
+            {
+                if (isSelected != value)
+                {
+                    isSelected = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("isSelected"));
+                }
+            } 
+        }
+
+        public Color backgroundColor = Color.Green;
+        public Color BackgroundColor
+        {
+            get
+            {
+                return backgroundColor;
+            }
+            set
+            {
+                if (backgroundColor != value)
+                {
+                    backgroundColor = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("backgroundColor"));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate {};
+
     }
 }

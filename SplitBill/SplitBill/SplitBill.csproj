@@ -15,4 +15,7 @@
     <Folder Include="ViewModel\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="System\ComponentModel\INotifyPropertyChanges.cs" />
+  </ItemGroup>
 </Project>
