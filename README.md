@@ -1,2 +1,2 @@
 # SpitBill
-This is an app to spit bill among friends
+This is an app to split bill among friends
