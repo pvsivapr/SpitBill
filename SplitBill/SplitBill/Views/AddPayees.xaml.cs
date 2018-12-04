@@ -19,9 +19,10 @@ namespace SplitBill.Views
         {
             _ContactsList = _contactsList;
             ContactsList = new ObservableCollection<PayeeList>();
-            foreach(var item in _ContactsList)
+            foreach (var item in _ContactsList)
             {
-                ContactsList.Add(new PayeeList{
+                ContactsList.Add(new PayeeList
+                {
                     ContactId = item.ContactId,
                     ContactName = item.ContactName,
                     DisplayName = item.DisplayName,
@@ -59,7 +60,7 @@ namespace SplitBill.Views
         {
             try
             {
-                Navigation.PopModalAsync(false);
+                //Navigation.PopModalAsync(false);
             }
             catch (Exception ex)
             {
@@ -67,31 +68,31 @@ namespace SplitBill.Views
             }
         }
 
-        //void Handle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        #region for Selected Payee
         void ContactSelected(object sender, SelectedItemChangedEventArgs e)
         {
             try
             {
-                var _itemSelected = ((ListView)sender).SelectedItem;
+                var _itemSelected = (PayeeList)(((ListView)sender).SelectedItem);
                 if (_itemSelected == null)
                 {
                     return;
                 }
                 else
                 {
-                    var itemSelected = (PayeeList)_itemSelected;
-                    if (itemSelected.BackgroundColor == Color.Green)
+                    if (_itemSelected.isSelected == false)
                     {
+                        var itemSelected = ContactsList.Where<PayeeList>(X => X.ContactId == _itemSelected.ContactId).FirstOrDefault();
+                        itemSelected.BackgroundColor = Color.Maroon;
+                        itemSelected.IsSelected = true;
                         selectedContactsList.Add(itemSelected);
-                        SelectedContactView selectedContact = new SelectedContactView(itemSelected)
+
+                        SelectedContactView selectedContactView = new SelectedContactView(itemSelected)
                         {
                         };
-                        selectedContactsStack.Children.Add(selectedContact);
-                        selectedContact.ItemUnSelected += (object _sender, EventArgs _e) =>
+                        selectedContactsStack.Children.Add(selectedContactView);
+
+                        selectedContactView.ItemUnSelected += (object _sender, EventArgs _e) =>
                         {
                             try
                             {
@@ -99,6 +100,7 @@ namespace SplitBill.Views
                                 var _unSelectedItem = _owner.PayeeList;
                                 var _selectedItem = ContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
                                 _selectedItem.BackgroundColor = Color.Green;
+                                _selectedItem.IsSelected = false;
                                 var unSelectedItem = selectedContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
                                 if (unSelectedItem != null)
                                 {
@@ -111,18 +113,87 @@ namespace SplitBill.Views
                                 DataPrintx.PrintException(ex);
                             }
                         };
-                        itemSelected.BackgroundColor = Color.Maroon;
+                    }
+                    else
+                    {
                     }
                 }
-                ((ListView)sender).SelectedItem = null;
+                //((ListView)sender).SelectedItem = null;
             }
             catch (Exception ex)
             {
                 DataPrintx.PrintException(ex);
             }
         }
+        /*
+        //void Handle_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //void ContactSelected(object sender, SelectedItemChangedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var _itemSelected = ((ListView)sender).SelectedItem;
+        //        if (_itemSelected == null)
+        //        {
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            var itemSelected = (PayeeList)_itemSelected;
+        //            //if (itemSelected.backgroundColor == Color.Green)
+        //            if (itemSelected.isSelected == false)
+        //            {
+        //                selectedContactsList.Add(itemSelected);
+        //                SelectedContactView selectedContact = new SelectedContactView(itemSelected)
+        //                {
+        //                };
+        //                selectedContactsStack.Children.Add(selectedContact);
+        //                selectedContact.ItemUnSelected += (object _sender, EventArgs _e) =>
+        //                {
+        //                    try
+        //                    {
+        //                        var _owner = (SelectedContactView)_sender;
+        //                        var _unSelectedItem = _owner.PayeeList;
+        //                        var _selectedItem = ContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
+        //                        //_selectedItem.BackgroundColor = Color.Green;
+        //                        _selectedItem.IsSelected = false;
+        //                        var unSelectedItem = selectedContactsList.Where<PayeeList>(X => X.ContactId == _unSelectedItem.ContactId).FirstOrDefault();
+        //                        if (unSelectedItem != null)
+        //                        {
+        //                            selectedContactsList.Remove(unSelectedItem);
+        //                        }
+        //                        selectedContactsStack.Children.Remove(_owner);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        DataPrintx.PrintException(ex);
+        //                    }
+        //                };
+        //                var _selected_Item = ContactsList.Where<PayeeList>(X => X.ContactId == itemSelected.ContactId).FirstOrDefault();
+        //                _selected_Item.IsSelected = true;
+        //                _selected_Item.BackgroundColor = Color.Maroon;
+        //                //itemSelected.backgroundColor = Color.Maroon;
+        //                //Device.BeginInvokeOnMainThread(async () => 
+        //                //{
+        //                //    itemSelected.BackgroundColor = Color.Maroon;
+        //                //}) ;
+        //            }
+        //        }
+        //        ((ListView)sender).SelectedItem = null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        DataPrintx.PrintException(ex);
+        //    }
+        //}
+        */
+        #endregion
+
     }
 
+    #region for SelectedContactView
     public class SelectedContactView : ContentView
     {
         public event EventHandler<EventArgs> ItemUnSelected;
@@ -151,17 +222,17 @@ namespace SplitBill.Views
                 };
                 TapGestureRecognizer closeImageTap = new TapGestureRecognizer();
                 closeImageTap.NumberOfTapsRequired = 1;
-                closeImageTap.Tapped += (object sender, EventArgs e) => 
+                closeImageTap.Tapped += (object sender, EventArgs e) =>
                 {
                     try
                     {
                         var handler = ItemUnSelected;
-                        if(handler != null)
+                        if (handler != null)
                         {
                             handler(this, e);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         DataPrintx.PrintException(ex);
                     }
@@ -192,13 +263,15 @@ namespace SplitBill.Views
                 };
                 Content = holder;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DataPrintx.PrintException(ex);
             }
         }
     }
+    #endregion
 
+    #region for PayeeList class
     public class PayeeList : System.ComponentModel.INotifyPropertyChanged
     {
         public string ContactId { get; set; }
@@ -220,12 +293,12 @@ namespace SplitBill.Views
                 if (isSelected != value)
                 {
                     isSelected = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("isSelected"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsSelected"));
                 }
-            } 
+            }
         }
 
-        public Color backgroundColor = Color.Green;
+        public Color backgroundColor;// = Color.Green;
         public Color BackgroundColor
         {
             get
@@ -237,12 +310,11 @@ namespace SplitBill.Views
                 if (backgroundColor != value)
                 {
                     backgroundColor = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("backgroundColor"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("BackgroundColor"));
                 }
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate {};
-
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
     }
+    #endregion
 }
