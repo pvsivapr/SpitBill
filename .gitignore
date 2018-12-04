@@ -1,0 +1,26 @@
+# Ignore file named '.DS_Store'
+.DS_Store
+
+# Ignore file named 'Thumbs.db'
+Thumbs.db
+
+# Ignore folder named 'obj'
+obj/
+
+# Ignore folder named 'bin'
+bin/
+
+# Ignore folder named '.vs'
+.vs/
+
+# Ignore folder named 'packages'
+packages/
+
+# Ignore file names 'IsIgnoreWorking.js'
+IsIgnoreWorking.js
+
+#add 'node_modules' to .gitignore file
+
+git rm -r --cached node_modules
+git commit -m 'Remove the now ignored directory node_modules'
+git push origin master
