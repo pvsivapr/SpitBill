@@ -86,6 +86,13 @@ namespace SplitBill.Views
                         itemSelected.BackgroundColor = Color.Maroon;
                         itemSelected.IsSelected = true;
                         selectedContactsList.Add(itemSelected);
+                        //Task.Run(async () => {     //Change the background color back after a small delay, no matter what happens
+                        //    await Task.Delay(300); //Or how ever long to wait
+
+                        //    Device.BeginInvokeOnMainThread(() => {
+                                
+                        //    }); //Turn it back to the default color after your event code is done
+                        //});
 
                         SelectedContactView selectedContactView = new SelectedContactView(itemSelected)
                         {
@@ -118,7 +125,7 @@ namespace SplitBill.Views
                     {
                     }
                 }
-                //((ListView)sender).SelectedItem = null;
+                ((ListView)sender).SelectedItem = null;
             }
             catch (Exception ex)
             {
