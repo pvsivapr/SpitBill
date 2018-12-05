@@ -86,6 +86,16 @@
     <AndroidResource Include="Resources\drawable\error32.png" />
     <AndroidResource Include="Resources\drawable\error24.png" />
     <AndroidResource Include="Resources\drawable\error16.png" />
+    <AndroidResource Include="Resources\drawable\UnChecked128.png" />
+    <AndroidResource Include="Resources\drawable\UnChecked64.png" />
+    <AndroidResource Include="Resources\drawable\UnChecked32.png" />
+    <AndroidResource Include="Resources\drawable\UnChecked24.png" />
+    <AndroidResource Include="Resources\drawable\UnChecked16.png" />
+    <AndroidResource Include="Resources\drawable\Checked128.png" />
+    <AndroidResource Include="Resources\drawable\Checked64.png" />
+    <AndroidResource Include="Resources\drawable\Checked32.png" />
+    <AndroidResource Include="Resources\drawable\Checked24.png" />
+    <AndroidResource Include="Resources\drawable\Checked16.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />

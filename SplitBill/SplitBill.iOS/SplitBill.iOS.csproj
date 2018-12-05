@@ -164,5 +164,15 @@
     <BundleResource Include="Resources\error32.png" />
     <BundleResource Include="Resources\error24.png" />
     <BundleResource Include="Resources\error16.png" />
+    <BundleResource Include="Resources\UnChecked128.png" />
+    <BundleResource Include="Resources\UnChecked64.png" />
+    <BundleResource Include="Resources\UnChecked32.png" />
+    <BundleResource Include="Resources\UnChecked24.png" />
+    <BundleResource Include="Resources\UnChecked16.png" />
+    <BundleResource Include="Resources\Checked128.png" />
+    <BundleResource Include="Resources\Checked64.png" />
+    <BundleResource Include="Resources\Checked32.png" />
+    <BundleResource Include="Resources\Checked24.png" />
+    <BundleResource Include="Resources\Checked16.png" />
   </ItemGroup>
 </Project>
